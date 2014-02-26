@@ -18,19 +18,20 @@ class PlayerProjections
       name = player_info.split('.')[-1].split(',')[0][1..-1]
       positions = []
 
-      find_position(positions, player_info)
-      binding.pry
+      find_positions(positions, player_info)
+      puts "#{name}: #{positions}"
     end
   end
 
 
-  def find_position(arr, player)
+  private
+
+  def find_positions(arr, player)
     POSITIONS.map { |position|
       arr << position if player.gsub(',','').split(' ').include?(position)
     }
   end
 end
 
-PlayerProjections.new().parse_batters
-
-# binding.pry
+x = PlayerProjections.new
+x.parse_batters
