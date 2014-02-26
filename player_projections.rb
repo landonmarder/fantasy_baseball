@@ -1,15 +1,17 @@
 require 'rest_client'
 require 'json'
 require 'pry'
+require 'csv'
 
 class PlayerProjections
 
   POSITIONS = %w{1B 2B SS C 3B OF DH}
 
-  def initialize
+  def initialize(csv)
     response_batters = RestClient.get 'http://www.kimonolabs.com/api/bt868shs?apikey=455e95d967d14e53ad7188d10746bcf6'
     json_batters = JSON.parse(response_batters)
     @batters = json_batters['results']['collection1']
+    @csv = csv
   end
 
   def parse_batters
@@ -29,6 +31,16 @@ class PlayerProjections
                   total_bases_non_hr: total_bases_non_hr(batter['slg'].to_f, batter['ab'].to_i, batter['hr'].to_i) }
     end
     batters
+  end
+
+  def to_csv
+    batters = parse_batters
+    CSV.open(@csv, 'wb') do |csv|
+      csv << batters.first.keys
+      batters.each do |hash|
+        csv << hash.values
+      end
+    end
   end
 
 
@@ -51,5 +63,5 @@ class PlayerProjections
   end
 end
 
-x = PlayerProjections.new
-x.parse_batters
+x = PlayerProjections.new('batter_test.csv')
+x.to_csv
