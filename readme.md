@@ -6,4 +6,5 @@ my point leagues and creates a csv for the draft.
 
 To use:
 * Clone repo
+* cd into repo
 * $ruby player_projections.rb csv_file
