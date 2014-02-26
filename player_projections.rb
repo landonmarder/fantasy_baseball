@@ -21,14 +21,12 @@ class PlayerProjections
       find_positions(positions, player_info)
 
 
-      batters << {name: find_name(player_info), position: positions.join(', '),
+      batters << { name: find_name(player_info), position: positions.join(', '),
                   at_bats: batter['ab'].to_i, runs: batter['r'].to_i,
                   home_runs: batter['hr'].to_i, rbi: batter['rbi'].to_i,
                   stolen_bases: batter['sb'].to_i, walks: batter['bb'].to_i,
-                  strike_outs: batter['k'].to_i, total_bases_non_hr: total_bases_non_hr(batter['slg'].to_f, batter['ab'].to_i, batter['hr'].to_i)
-                }
-
-      binding.pry
+                  strike_outs: batter['k'].to_i,
+                  total_bases_non_hr: total_bases_non_hr(batter['slg'].to_f, batter['ab'].to_i, batter['hr'].to_i) }
     end
     batters
   end
