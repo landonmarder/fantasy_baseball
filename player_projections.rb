@@ -66,5 +66,5 @@ class PlayerProjections
   end
 end
 
-x = PlayerProjections.new('batter_test.csv')
+x = PlayerProjections.new(ARGV[0])
 x.to_csv
