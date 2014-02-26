@@ -22,13 +22,13 @@ class PlayerProjections
 
       find_positions(positions, player_info)
 
-
       batters << { name: find_name(player_info), position: positions.join(', '),
-                  at_bats: batter['ab'].to_i, runs: batter['r'].to_i,
+                  at_bats: batter['ab'].to_i, runs: batter['runs'].to_i,
                   home_runs: batter['hr'].to_i, rbi: batter['rbi'].to_i,
                   stolen_bases: batter['sb'].to_i, walks: batter['bb'].to_i,
                   strike_outs: batter['k'].to_i,
-                  total_bases_non_hr: total_bases_non_hr(batter['slg'].to_f, batter['ab'].to_i, batter['hr'].to_i) }
+                  total_bases_non_hr: total_bases_non_hr(batter['slg'].to_f, batter['ab'].to_i, batter['hr'].to_i),
+                  total_points: hitter_total_points(batter['ab'].to_i, batter['runs'].to_i, total_bases_non_hr(batter['slg'].to_f, batter['ab'].to_i, batter['hr'].to_i), batter['hr'].to_i, batter['rbi'].to_i, batter['sb'].to_i, batter['bb'].to_i, batter['k'].to_i) }
     end
     batters
   end
@@ -43,7 +43,6 @@ class PlayerProjections
     end
   end
 
-
   private
 
   def find_positions(arr, player)
@@ -55,11 +54,15 @@ class PlayerProjections
   def find_name(player)
     x = player.split('.')
     x.shift
-    name = x.join('').split(',')[0][1..-1]
+    x.join('').split(',')[0][1..-1]
   end
 
   def total_bases_non_hr(slg, ab, hr)
     (slg * ab) - (hr * 4)
+  end
+
+  def hitter_total_points(ab, r, tb, hr, rbi, sb, bb, k)
+    (-0.5 * ab) + (1 * r) + (1.2533 * tb) + (4.5 * hr) + (1 * rbi) + (2 * sb) + (1 * bb) + (-0.7 + k)
   end
 end
 
