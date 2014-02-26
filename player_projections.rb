@@ -15,11 +15,12 @@ class PlayerProjections
   def parse_batters
     @batters.each do |batter|
       player_info = batter['name']['text']
-      name = player_info.split('.')[-1].split(',')[0][1..-1]
+      x = player_info.split('.')
+      x.shift
+      name = x.join('').split(',')[0][1..-1]
       positions = []
 
       find_positions(positions, player_info)
-      puts "#{name}: #{positions}"
     end
   end
 
