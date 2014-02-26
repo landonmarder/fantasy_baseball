@@ -5,22 +5,38 @@ require 'csv'
 
 class PlayerProjections
 
-  POSITIONS = %w{1B 2B SS C 3B OF DH}
+  POSITIONS = %w{1B 2B SS C 3B OF DH SP RP}
 
   def initialize(csv)
     response_batters = RestClient.get 'http://www.kimonolabs.com/api/bt868shs?apikey=455e95d967d14e53ad7188d10746bcf6'
     json_batters = JSON.parse(response_batters)
     @batters = json_batters['results']['collection1']
+
+    pitchers_response = RestClient.get 'http://www.kimonolabs.com/api/9ks1v5fg?apikey=455e95d967d14e53ad7188d10746bcf6'
+    json_pitchers = JSON.parse(pitchers_response)
+    @pitchers = json_pitchers['results']['collection1']
     @csv = csv
   end
 
   def to_csv
+    pitchers = parse_pitchers
     batters = parse_batters
     CSV.open(@csv, 'wb') do |csv|
       csv << batters.first.keys
       batters.each do |hash|
         csv << hash.values
       end
+    end
+  end
+
+  def parse_pitchers
+    pitchers = []
+    @pitchers.each do |pitcher|
+      player_info = pitcher['name']['text']
+      x = find_name(player_info)
+      positions = []
+
+      find_positions(positions, player_info)
     end
   end
 
