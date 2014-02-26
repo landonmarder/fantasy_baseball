@@ -8,3 +8,9 @@ To use:
 * Clone repo
 * cd into repo
 * $ruby player_projections.rb csv_file
+
+To do:
+* Batters are complete, need to do pitchers
+
+To customize scoring:
+* Change weights in #hitter_total_points

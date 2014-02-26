@@ -14,6 +14,18 @@ class PlayerProjections
     @csv = csv
   end
 
+  def to_csv
+    batters = parse_batters
+    CSV.open(@csv, 'wb') do |csv|
+      csv << batters.first.keys
+      batters.each do |hash|
+        csv << hash.values
+      end
+    end
+  end
+
+  private
+
   def parse_batters
     batters = []
     @batters.each do |batter|
@@ -32,18 +44,6 @@ class PlayerProjections
     end
     batters
   end
-
-  def to_csv
-    batters = parse_batters
-    CSV.open(@csv, 'wb') do |csv|
-      csv << batters.first.keys
-      batters.each do |hash|
-        csv << hash.values
-      end
-    end
-  end
-
-  private
 
   def find_positions(arr, player)
     POSITIONS.map { |position|
