@@ -10,7 +10,7 @@ To use:
 * $ruby player_projections.rb csv_file
 
 To do:
-* Batters are complete, need to do pitchers
+* Load all pitchers and hitters into csv_file order by total points
 
 To customize scoring:
-* Change weights in #hitter_total_points
+* Change weights in #hitter_total_points or #pitcher_total_points

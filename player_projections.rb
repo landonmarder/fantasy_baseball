@@ -21,9 +21,17 @@ class PlayerProjections
   def to_csv
     pitchers = parse_pitchers
     batters = parse_batters
-    CSV.open(@csv, 'wb') do |csv|
+
+    CSV.open('batters_updated.csv', 'wb') do |csv|
       csv << batters.first.keys
       batters.each do |hash|
+        csv << hash.values
+      end
+    end
+
+    CSV.open('pitchers_updated.csv', 'wb') do |csv|
+      csv << pitchers.first.keys
+      pitchers.each do |hash|
         csv << hash.values
       end
     end
@@ -33,11 +41,18 @@ class PlayerProjections
     pitchers = []
     @pitchers.each do |pitcher|
       player_info = pitcher['name']['text']
-      x = find_name(player_info)
       positions = []
 
       find_positions(positions, player_info)
+
+      pitchers << { name: find_name(player_info), position: positions.join(', '),
+                  innings: pitcher['ip'].to_f, saves: pitcher['save'].to_i,
+                  walks_hits: walks_and_hits(pitcher['whip'].to_f, pitcher['ip'].to_f),
+                  strike_outs: pitcher['k'].to_i, earned_runs: earned_runs(pitcher['era'].to_f, pitcher['ip'].to_f),
+                  wins: pitcher['win'].to_i,
+                  total_points: pitcher_total_points(pitcher['ip'].to_f, pitcher['w'].to_i, pitcher['sv'].to_i, walks_and_hits(pitcher['whip'].to_f, pitcher['ip'].to_f), earned_runs(pitcher['era'].to_f, pitcher['ip'].to_f), pitcher['k'].to_i ) }
     end
+    pitchers
   end
 
   private
@@ -78,7 +93,19 @@ class PlayerProjections
   end
 
   def hitter_total_points(ab, r, tb, hr, rbi, sb, bb, k)
-    (-0.5 * ab) + (1 * r) + (1.2533 * tb) + (4.5 * hr) + (1 * rbi) + (2 * sb) + (1 * bb) + (-0.7 + k)
+    (-0.5 * ab) + (1.0 * r) + (1.2533 * tb) + (4.5 * hr) + (1.0 * rbi) + (2.0 * sb) + (1.0 * bb) + (-0.7 + k)
+  end
+
+  def walks_and_hits(whip, ip)
+    whip * ip
+  end
+
+  def earned_runs(era, ip)
+    (era / 9.0) * ip
+  end
+
+  def pitcher_total_points(ip, w, sv, h_bb, er, k)
+    (2.0 * ip) + (4.0 * w) + (2.5 * sv) + (-1.0 * h_bb) + (-3.0 * er) + (1.0 * k)
   end
 end
 
