@@ -7,4 +7,12 @@ response_batters = RestClient.get 'http://www.kimonolabs.com/api/bt868shs?apikey
 json_batters = JSON.parse(response_batters)
 
 batters = json_batters['results']['collection1']
-binding.pry
+
+arr = []
+
+batters.each do |batter|
+  name = batter['name']['text'].split('.')[-1].split(',')[0][1..-1]
+end
+
+
+# binding.pry
