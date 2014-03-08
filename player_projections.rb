@@ -26,27 +26,29 @@ class PlayerProjections
     parse_auction_values(players)
     calculate_league_values(players)
 
-    CSV.open('batters_updated.csv', 'wb') do |csv|
+    CSV.open("projections/batters_updated.csv", 'wb') do |csv|
       csv << batters.first.keys
       batters.each do |hash|
         csv << hash.values
       end
     end
+    puts "---------------"
     puts "Batters updated!"
-    CSV.open('pitchers_updated.csv', 'wb') do |csv|
+    CSV.open("projections/pitchers_updated.csv", 'wb') do |csv|
       csv << pitchers.first.keys
       pitchers.each do |hash|
         csv << hash.values
       end
     end
     puts "Pitchers updated!"
-    CSV.open('players_updated.csv', 'wb') do |csv|
+
+    CSV.open("projections/fantasy_baseball_auction-#{Time.new.month.to_s+"-"+Time.new.day.to_s+"-"+Time.new.year.to_s}.csv", 'wb') do |csv|
       csv << players.first.keys
       players.each do |hash|
         csv << hash.values
       end
     end
-    puts "Total players updated!"
+    puts "Projections can be found in projections/fantasy_baseball_auction-#{Time.new.month.to_s+"-"+Time.new.day.to_s+"-"+Time.new.year.to_s}.csv"
   end
 
   private
@@ -56,6 +58,7 @@ class PlayerProjections
     players.each do |player|
       player[:espn_auction_value] = 0 if player[:espn_auction_value] == nil
       player[:league_value] = player[:total_points] / cost_per_point
+      player[:perceived_value] = player[:league_value] - player[:espn_auction_value]
     end
   end
 
