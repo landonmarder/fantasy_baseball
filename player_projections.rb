@@ -30,22 +30,24 @@ class PlayerProjections
         csv << hash.values
       end
     end
-    puts "Batters updated"
+    puts "Batters updated!"
     CSV.open('pitchers_updated.csv', 'wb') do |csv|
       csv << pitchers.first.keys
       pitchers.each do |hash|
         csv << hash.values
       end
     end
-    puts "Pitchers updated"
+    puts "Pitchers updated!"
     CSV.open('players_updated.csv', 'wb') do |csv|
       csv << players.first.keys
       players.each do |hash|
         csv << hash.values
       end
     end
-    puts "Total players updated"
+    puts "Total players updated!"
   end
+
+  private
 
   def parse_pitchers
     pitchers = []
@@ -74,8 +76,6 @@ class PlayerProjections
       end
     end
   end
-
-  private
 
   def parse_batters
     batters = []
