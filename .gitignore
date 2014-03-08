@@ -1,1 +1,5 @@
-*.csv
+batters_original.csv
+batters_updated.csv
+pitchers_original.csv
+pitchers_updated.csv
+players_updated.csv

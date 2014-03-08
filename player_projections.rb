@@ -22,6 +22,7 @@ class PlayerProjections
     batters = parse_batters
     players = pitchers + batters
     players.sort_by! { |player| -player[:total_points] }
+    parse_auction_values(players)
 
     CSV.open('batters_updated.csv', 'wb') do |csv|
       csv << batters.first.keys
@@ -62,6 +63,16 @@ class PlayerProjections
                   total_points: pitcher_total_points(pitcher['ip'].to_f, pitcher['w'].to_i, pitcher['sv'].to_i, walks_and_hits(pitcher['whip'].to_f, pitcher['ip'].to_f), earned_runs(pitcher['era'].to_f, pitcher['ip'].to_f), pitcher['k'].to_i ) }
     end
     pitchers
+  end
+
+  def parse_auction_values(players)
+    CSV.foreach('espn_auction_values.csv') do |row|
+      puts "#{row[0]}"
+      auction_value = row[2].gsub('$','').split('/')[1].to_i
+      players.each do |player|
+        player[:espn_auction_value] = auction_value if player[:name] == row[0]
+      end
+    end
   end
 
   private
