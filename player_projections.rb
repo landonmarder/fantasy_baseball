@@ -7,6 +7,7 @@ class PlayerProjections
 
   POSITIONS = %w{1B 2B SS C 3B OF DH SP RP}
   AUCTION_DOLLARS = 260 * 12
+  NUMBER_OF_SCORERS = 150
 
   def initialize()
     response_batters = RestClient.get 'http://www.kimonolabs.com/api/bt868shs?apikey=455e95d967d14e53ad7188d10746bcf6'
@@ -43,9 +44,9 @@ class PlayerProjections
     puts "Pitchers updated!"
 
     CSV.open("projections/fantasy_baseball_auction-#{Time.new.month.to_s+"-"+Time.new.day.to_s+"-"+Time.new.year.to_s}.csv", 'wb') do |csv|
-      csv << players.first.keys
+      csv << ["Name", "Position","Total Points", "League Value", "ESPN Value", "Perceived Value"]
       players.each do |hash|
-        csv << hash.values
+        csv << [hash[:name], hash[:position], hash[:total_points], hash[:league_value], hash[:espn_auction_value], hash[:perceived_value]]
       end
     end
     puts "Projections can be found in projections/fantasy_baseball_auction-#{Time.new.month.to_s+"-"+Time.new.day.to_s+"-"+Time.new.year.to_s}.csv"
@@ -68,7 +69,7 @@ class PlayerProjections
 
   def total_inplay_points(players)
     sum = 0
-    players[0..227].each do |player|
+    players[0..NUMBER_OF_SCORERS].each do |player|
       sum += player[:total_points]
     end
     sum
