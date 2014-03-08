@@ -7,7 +7,7 @@ class PlayerProjections
 
   POSITIONS = %w{1B 2B SS C 3B OF DH SP RP}
 
-  def initialize(csv)
+  def initialize()
     response_batters = RestClient.get 'http://www.kimonolabs.com/api/bt868shs?apikey=455e95d967d14e53ad7188d10746bcf6'
     json_batters = JSON.parse(response_batters)
     @batters = json_batters['results']['collection1']
@@ -15,12 +15,13 @@ class PlayerProjections
     pitchers_response = RestClient.get 'http://www.kimonolabs.com/api/9ks1v5fg?apikey=455e95d967d14e53ad7188d10746bcf6'
     json_pitchers = JSON.parse(pitchers_response)
     @pitchers = json_pitchers['results']['collection1']
-    @csv = csv
   end
 
   def to_csv
     pitchers = parse_pitchers
     batters = parse_batters
+    players = pitchers + batters
+    players.sort_by! { |player| -player[:total_points] }
 
     CSV.open('batters_updated.csv', 'wb') do |csv|
       csv << batters.first.keys
@@ -28,13 +29,21 @@ class PlayerProjections
         csv << hash.values
       end
     end
-
+    puts "Batters updated"
     CSV.open('pitchers_updated.csv', 'wb') do |csv|
       csv << pitchers.first.keys
       pitchers.each do |hash|
         csv << hash.values
       end
     end
+    puts "Pitchers updated"
+    CSV.open('players_updated.csv', 'wb') do |csv|
+      csv << players.first.keys
+      players.each do |hash|
+        csv << hash.values
+      end
+    end
+    puts "Total players updated"
   end
 
   def parse_pitchers
@@ -109,5 +118,5 @@ class PlayerProjections
   end
 end
 
-x = PlayerProjections.new(ARGV[0])
+x = PlayerProjections.new()
 x.to_csv
