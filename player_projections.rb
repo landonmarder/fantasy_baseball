@@ -6,6 +6,7 @@ require 'csv'
 class PlayerProjections
 
   POSITIONS = %w{1B 2B SS C 3B OF DH SP RP}
+  AUCTION_DOLLARS = 260 * 12
 
   def initialize()
     response_batters = RestClient.get 'http://www.kimonolabs.com/api/bt868shs?apikey=455e95d967d14e53ad7188d10746bcf6'
@@ -23,6 +24,7 @@ class PlayerProjections
     players = pitchers + batters
     players.sort_by! { |player| -player[:total_points] }
     parse_auction_values(players)
+    calculate_league_values(players)
 
     CSV.open('batters_updated.csv', 'wb') do |csv|
       csv << batters.first.keys
@@ -48,6 +50,26 @@ class PlayerProjections
   end
 
   private
+
+  def calculate_league_values(players)
+    cost_per_point = cost_per_point(players)
+    players.each do |player|
+      player[:espn_auction_value] = 0 if player[:espn_auction_value] == nil
+      player[:league_value] = player[:total_points] / cost_per_point
+    end
+  end
+
+  def cost_per_point(players)
+    total_inplay_points(players) / AUCTION_DOLLARS
+  end
+
+  def total_inplay_points(players)
+    sum = 0
+    players[0..227].each do |player|
+      sum += player[:total_points]
+    end
+    sum
+  end
 
   def parse_pitchers
     pitchers = []

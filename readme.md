@@ -10,7 +10,7 @@ To use:
 * $ruby player_projections.rb
 
 To do:
-* Find values for each player based on points settings
+* Make tweaks to the algorithms
 
 To customize scoring:
 * Change weights in #hitter_total_points or #pitcher_total_points
