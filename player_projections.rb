@@ -7,7 +7,7 @@ class PlayerProjections
 
   POSITIONS = %w{1B 2B SS C 3B OF DH SP RP}
   AUCTION_DOLLARS = 260 * 12
-  NUMBER_OF_SCORERS = 150
+  AUCTIONABLE_PLAYERS = 150
 
   def initialize()
     response_batters = RestClient.get 'http://www.kimonolabs.com/api/bt868shs?apikey=455e95d967d14e53ad7188d10746bcf6'
@@ -69,7 +69,7 @@ class PlayerProjections
 
   def total_inplay_points(players)
     sum = 0
-    players[0..NUMBER_OF_SCORERS].each do |player|
+    players[0..AUCTIONABLE_PLAYERS].each do |player|
       sum += player[:total_points]
     end
     sum
